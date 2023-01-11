@@ -40,10 +40,8 @@ async def json_data(request):
                     items["filename"] = item["path"]
 
                 base_data.append(items)
-                await database.execute(
-                    "INSERT INTO project_base (username, ghlink, filename) VALUES (?,?,?)",
-                    (
-                        items["username"], items["ghlink"], items["filename"]))
+                await database.execute("INSERT INTO project_base (username, ghlink, filename) VALUES (?,?,?)",
+                                      (items["username"], items["ghlink"], items["filename"]))
             async with database.execute("SELECT * FROM project_base LIMIT 100") as cur:
                 columns = [column[0] for column in cur.description]
                 result = await cur.fetchall()
