@@ -4,6 +4,7 @@ import aiofiles
 import aiosqlite
 from aiohttp import web
 import sqlite3
+import requests
 
 #spajanje sa bazom podataka (ime baze - base.db)
 connection = sqlite3.connect('base.db')
@@ -60,6 +61,9 @@ async def json_data(request):
                 for row in result:
                     final.append(dict(zip(columns, row)))
                 data = final
+
+                requests.post('http://127.0.0.1:8080', json=data)
+
                 await database.commit()
         #vraćanje rezultata asinkrone funkcije
         return web.json_response(data, status = 200)
