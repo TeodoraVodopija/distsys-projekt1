@@ -36,7 +36,7 @@ async def json_data(request):
         final = []
         #konekcija sa bazom podataka
         async with aiosqlite.connect("base.db") as database:
-            #for petlja za prolazak kroz bazu podataka
+            #for petlja za prolazak kroz json datoteku
             for item in all_data:
                 #inicijaliziranje varijable na početni prazan dictionary
                 items = {}
@@ -56,10 +56,19 @@ async def json_data(request):
                                       (items["username"], items["ghlink"], items["filename"]))
             #selektiranje iz spremljene baze podataka koju smo napunili gornjim podacima
             async with database.execute("SELECT * FROM project_base LIMIT 100") as cur:
-                columns = [column[0] for column in cur.description]
+                #columns = [column[0] for column in cur.description]
                 result = await cur.fetchall()
+                response = {}
                 for row in result:
-                    final.append(dict(zip(columns, row)))
+                    service_id, usernames, github_links = row
+                    response = {
+                        "service_id": service_id,
+                        "data": {
+                            "usernames": usernames,
+                            "githubLinks": github_links
+                        }
+                    }
+                    #final.append(dict(zip(columns, row)))
                 data = final
 
                 requests.post('http://127.0.0.1:8081', json = data)
