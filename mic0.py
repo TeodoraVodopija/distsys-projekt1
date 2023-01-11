@@ -56,26 +56,27 @@ async def json_data(request):
                                       (items["username"], items["ghlink"], items["filename"]))
             #selektiranje iz spremljene baze podataka koju smo napunili gornjim podacima
             async with database.execute("SELECT * FROM project_base LIMIT 100") as cur:
-                #columns = [column[0] for column in cur.description]
+                columns = [column[0] for column in cur.description]
                 result = await cur.fetchall()
                 response = {}
                 for row in result:
-                    service_id, usernames, github_links = row
+                    service_id, usernames, github_links, paths = row
                     response = {
                         "service_id": service_id,
                         "data": {
                             "usernames": usernames,
-                            "githubLinks": github_links
+                            "githubLinks": github_links,
+                            "paths": paths
                         }
                     }
-                    #final.append(dict(zip(columns, row)))
+                    final.append(dict(zip(columns, row)))
                 data = final
 
                 requests.post('http://127.0.0.1:8081', json = data)
 
                 await database.commit()
         #vraćanje rezultata asinkrone funkcije
-        return web.json_response(data, status = 200)
+        return web.json_response(response, status = 200)
 
 app = web.Application()
 app.router.add_routes(routes)
