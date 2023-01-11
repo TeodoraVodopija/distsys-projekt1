@@ -10,7 +10,7 @@ async def selected(request):
     json_data = await request.json()
     #deklaracija i inicijalizacija nove varijable kao početne prazne liste
     wt1 = []
-    #provjera ako username počinje slovom w ili W
+    #provjera ako username počinje slovom w/W
     for user in json_data:
         if 'username' in user and user['username'].lower().startswith('w'):
             wt1.append(user['username'])
