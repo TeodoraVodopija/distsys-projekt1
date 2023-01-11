@@ -1,6 +1,7 @@
 #implementiranje potrebnih paketa
 from aiohttp import web
 import requests
+import unittest
 
 #Worker tokenizer (WT) mikroservis
 routes = web.RouteTableDef()
@@ -16,13 +17,18 @@ async def selected(request):
             wt2.append(user['username'])
 
     #ispis rezultata
-    res2 = wt2
-    print(res2)
+    res = wt2
+    print(res)
 
-    requests.post('http://127.0.0.1:8085/gatherData', json = res2)
+    requests.post('http://127.0.0.1:8085/gatherData', json = res)
 
-    return web.json_response(res2, status = 200)
+    return web.json_response(res, status = 200)
 
 app = web.Application()
 app.router.add_routes(routes)
 web.run_app(app, port = 8084)
+
+class test(unittest.TestCase):
+    async def test_selected(self):
+        res = await selected()
+        self.assertEqual(res, web.json_response(res, status = 200))

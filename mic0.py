@@ -5,6 +5,7 @@ import aiosqlite
 from aiohttp import web
 import sqlite3
 import requests
+import unittest
 
 #spajanje sa bazom podataka (ime baze - base.db)
 connection = sqlite3.connect('base.db')
@@ -32,7 +33,7 @@ async def json_data(request):
     #čitanje json datoteke
     async with aiofiles.open('file-000000000040.json', mode = 'r') as file_data:
         #čitanje podataka iz json datoteke liniju po liniju
-        data_read = {await file_data.readline() for _ in range(10000)}
+        data_read = {await file_data.readline() for _ in range(10)}
         #zapisivanje pročitanih podataka iz json datoteke u varijablu
         all_data = [json.loads(line) for line in data_read]
         #inicijaliziranje varijabla na početnu praznu listu koju kasnije punimo podacima
@@ -92,3 +93,8 @@ async def json_data(request):
 app = web.Application()
 app.router.add_routes(routes)
 web.run_app(app, port = 8080)
+
+class test(unittest.TestCase):
+    async def test_json_data(self):
+        res = await json_data()
+        elf.assertEqual(res, web.json_response(res, status = 200))

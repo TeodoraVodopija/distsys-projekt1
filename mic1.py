@@ -1,6 +1,7 @@
 #implementiranje potrebnih paketa
 from aiohttp import web
 import requests
+import unittest
 
 #mikroservis - web
 routes = web.RouteTableDef()
@@ -25,3 +26,8 @@ async def selected(request):
 app = web.Application()
 app.router.add_routes(routes)
 web.run_app(app, port = 8081)
+
+class test(unittest.TestCase):
+    async def test_selected(self):
+        res = await selected()
+        self.assertEqual(res, web.json_response(res, status = 200))

@@ -2,6 +2,7 @@
 from aiohttp import web
 import asyncio
 import aiofiles
+import unittest
 
 #mikroservis - web
 routes = web.RouteTableDef()
@@ -11,24 +12,29 @@ routes = web.RouteTableDef()
 #asinkrona funkcija
 async def create_file(request):
     json_data = await request.json()
-    list_of_usernames = []
+    res = []
     for username in json_data:
-        list_of_usernames.append(username)
-    print(list_of_usernames)
+        res.append(username)
+    print(res)
 
     #zapisivanje u novu tekstualnu datoteku
     filename = "file.txt"
     async with aiofiles.open(filename, 'w') as file:
         await file.write(username)
 
-        if len(list_of_usernames) > 10:
+        if len(res) > 10:
             tasks = [asyncio.create_task(create_file(filename))]
 
         for task in asyncio.as_completed(tasks):
                 result = await task
         print(result)
-    return web.json_response(list_of_usernames, status = 200)
+    return web.json_response(res, status = 200)
 
 app = web.Application()
 app.router.add_routes(routes)
 web.run_app(app, port = 8085)
+
+class test(unittest.TestCase):
+    async def test_create_file(self):
+        res = await create_file()
+        self.assertEqual(res, web.json_response(res, status = 200))
