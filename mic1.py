@@ -1,5 +1,6 @@
 #implementiranje potrebnih paketa
 from aiohttp import web
+import requests
 
 #mikroservis - web
 routes = web.RouteTableDef()
@@ -15,15 +16,12 @@ async def selected(request):
     result = data
     #ispis rezultata u konzolu
     print("result: ", result)
-    """
-    url1 = 'http://127.0.0.1:8083/'
-    url2 = 'http://127.0.0.1:8084/'
-    
-    requests.post(url1, json=result)
-    requests.post(url2, json=result)
-    """
+    #prosljeđivanje podataka kao dictionary WT mikroservisu
+    requests.post('http://127.0.0.1:8083/', json = result)
+    requests.post('http://127.0.0.1:8084/', json = result)
+
     return web.json_response(result, status = 200)
 
 app = web.Application()
 app.router.add_routes(routes)
-web.run_app(app, port = 8080)
+web.run_app(app, port = 8081)
