@@ -62,7 +62,7 @@ async def json_data(request):
                     final.append(dict(zip(columns, row)))
                 data = final
 
-                requests.post('http://127.0.0.1:8080', json=data)
+                requests.post('http://127.0.0.1:8081', json = data)
 
                 await database.commit()
         #vraćanje rezultata asinkrone funkcije
@@ -70,4 +70,4 @@ async def json_data(request):
 
 app = web.Application()
 app.router.add_routes(routes)
-web.run_app(app, port = 8081)
+web.run_app(app, port = 8080)
