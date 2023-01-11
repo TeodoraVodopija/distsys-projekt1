@@ -6,7 +6,6 @@ from aiohttp import web
 import sqlite3
 import requests
 import aiounittest
-from requests import request
 
 #spajanje sa bazom podataka (ime baze - base.db)
 connection = sqlite3.connect('base.db')
@@ -97,9 +96,22 @@ web.run_app(app, port = 8080)
 
 class test(aiounittest.AsyncTestCase):
     async def test_json_data(self):
-        result = await json_data()
+        result = await json_data(app)
         self.assertEqual(result, result)
 
     async def test_await_json_data(self):
         with self.assertRaises(Exception) as e:
             await json_data()
+
+"""
+const request = require('supertest');
+const app = require('../src/app');
+
+describe('Test the root path', () => {
+  test('It should response the GET method', async () => {
+    const response = await request(app).get('/');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toBe('Hello, microservice!');
+  });
+});"""
