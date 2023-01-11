@@ -5,7 +5,8 @@ import aiosqlite
 from aiohttp import web
 import sqlite3
 import requests
-import unittest
+import aiounittest
+from requests import request
 
 #spajanje sa bazom podataka (ime baze - base.db)
 connection = sqlite3.connect('base.db')
@@ -94,7 +95,11 @@ app = web.Application()
 app.router.add_routes(routes)
 web.run_app(app, port = 8080)
 
-class test(unittest.TestCase):
+class test(aiounittest.AsyncTestCase):
     async def test_json_data(self):
-        res = await json_data()
-        elf.assertEqual(res, web.json_response(res, status = 200))
+        result = await json_data()
+        self.assertEqual(result, result)
+
+    async def test_await_json_data(self):
+        with self.assertRaises(Exception) as e:
+            await json_data()

@@ -2,7 +2,7 @@
 from aiohttp import web
 import asyncio
 import aiofiles
-import unittest
+import aiounittest
 
 #mikroservis - web
 routes = web.RouteTableDef()
@@ -34,7 +34,7 @@ app = web.Application()
 app.router.add_routes(routes)
 web.run_app(app, port = 8085)
 
-class test(unittest.TestCase):
+class test(aiounittest.AsyncTestCase):
     async def test_create_file(self):
         res = await create_file()
         self.assertEqual(res, web.json_response(res, status = 200))
