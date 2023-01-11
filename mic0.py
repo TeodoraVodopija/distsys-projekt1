@@ -8,10 +8,12 @@ import requests
 
 #spajanje sa bazom podataka (ime baze - base.db)
 connection = sqlite3.connect('base.db')
+#kreiranje kursor objekta
 cursor = connection.cursor()
 
 #čitanje iz baze podataka
 cursor.execute("SELECT COUNT(*) FROM project_base")
+#dohvaćanje prvog retka iz tablice baze podataka
 c = cursor.fetchone()[0]
 
 #provjera ako je baza podataka prazna
@@ -23,12 +25,14 @@ else:
 #mikroservis - web
 routes = web.RouteTableDef()
 
+#ruta mikroservisa
 @routes.get("/dataJson")
+#asinkrona funkcija json_data
 async def json_data(request):
     #čitanje json datoteke
     async with aiofiles.open('file-000000000040.json', mode = 'r') as file_data:
         #čitanje podataka iz json datoteke liniju po liniju
-        data_read = {await file_data.readline() for _ in range(100)}
+        data_read = {await file_data.readline() for _ in range(10000)}
         #zapisivanje pročitanih podataka iz json datoteke u varijablu
         all_data = [json.loads(line) for line in data_read]
         #inicijaliziranje varijabla na početnu praznu listu koju kasnije punimo podacima
@@ -56,9 +60,13 @@ async def json_data(request):
                                       (items["username"], items["ghlink"], items["filename"]))
             #selektiranje iz spremljene baze podataka koju smo napunili gornjim podacima
             async with database.execute("SELECT * FROM project_base LIMIT 100") as cur:
+                #dohvaćanje imena stupaca
                 columns = [column[0] for column in cur.description]
+                #dohvaćanje svih redaka kao listu tuple-a
                 result = await cur.fetchall()
+                #prazan dictionary u koji se spremaju podaci
                 response = {}
+                #prolazak kroz bazu podataka i uzimanje podataka
                 for row in result:
                     service_id, usernames, github_links, paths = row
                     response = {
@@ -69,9 +77,12 @@ async def json_data(request):
                             "paths": paths
                         }
                     }
+                    #zapisivanje u listu
                     final.append(dict(zip(columns, row)))
+                #prebacivanje listu u varijablu
                 data = final
 
+                #prosljeđivanje liste podataka drugom mikroservisu
                 requests.post('http://127.0.0.1:8081', json = data)
 
                 await database.commit()
