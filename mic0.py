@@ -33,7 +33,7 @@ async def json_data(request):
     #čitanje json datoteke
     async with aiofiles.open('file-000000000040.json', mode = 'r') as file_data:
         #čitanje podataka iz json datoteke liniju po liniju
-        data_read = {await file_data.readline() for _ in range(10)}
+        data_read = {await file_data.readline() for _ in range(10000)}
         #zapisivanje pročitanih podataka iz json datoteke u varijablu
         all_data = [json.loads(line) for line in data_read]
         #inicijaliziranje varijabla na početnu praznu listu koju kasnije punimo podacima
